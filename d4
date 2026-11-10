@@ -1,0 +1,59 @@
+### SQL Commands Quick Reference Card
+
+```sql
+/* =========================================================
+   1. JOINS
+   ========================================================= */
+
+-- INNER JOIN (Matches rows with common values in both tables)
+SELECT S.Student_Name, D.Department_Name
+FROM Student S
+INNER JOIN Department D
+ON S.Dept_ID = D.Dept_ID;
+
+-- EQUI JOIN (Uses the equality '=' operator in the WHERE clause)
+SELECT S.Student_Name, D.Department_Name
+FROM Student S, Department D
+WHERE S.Dept_ID = D.Dept_ID;
+
+-- LEFT OUTER JOIN (All left records + matching right records)
+SELECT S.Student_Name, D.Department_Name
+FROM Student S 
+LEFT OUTER JOIN Department D
+ON S.Dept_ID = D.Dept_ID;
+
+-- RIGHT OUTER JOIN (All right records + matching left records)
+SELECT S.Student_Name, D.Department_Name
+FROM Student S 
+RIGHT OUTER JOIN Department D
+ON S.Dept_ID = D.Dept_ID;
+
+-- FULL OUTER JOIN (All records from both tables; missing values = NULL)
+SELECT S.Student_Name, D.Department_Name
+FROM Student S 
+FULL OUTER JOIN Department D
+ON S.Dept_ID = D.Dept_ID;
+
+
+/* =========================================================
+   2. SUBQUERIES
+   ========================================================= */
+
+-- NESTED SUBQUERY (Inner query runs independently first)
+SELECT Student_Name, Marks
+FROM Student
+WHERE Marks > (
+    SELECT AVG(Marks)
+    FROM Student
+);
+
+-- CORRELATED SUBQUERY (Inner query runs for each row of the outer query)
+SELECT S1.Student_Name, S1.Department, S1.Marks
+FROM Student S1
+WHERE S1.Marks > (
+    SELECT AVG(S2.Marks)
+    FROM Student S2
+    WHERE S2.Department = S1.Department
+);
+
+```
