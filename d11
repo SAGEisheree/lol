@@ -1,0 +1,98 @@
+1)
+
+use("name")
+
+db.students.insertMany([
+    {
+        rollno: 101,
+        name: "Sangeetha",
+        marks: 95,
+        subjects: ["Python", "Java", "MongoDB"]
+    },
+    {
+        rollno: 102,
+        name: "Ravi",
+        marks: 88,
+        subjects: ["C", "Python", "DBMS"]
+    },
+    {
+        rollno: 103,
+        name: "Priya",
+        marks: 92,
+        subjects: ["Java", "MongoDB", "AI"]
+    }
+])
+
+2.Display all documents:
+
+db["students"].find()
+
+db.students.find().pretty()
+
+#In MongoDB, .pretty() is used to display documents in a more readable format.
+
+3. Count Documents:
+
+db.students.countDocuments()
+
+
+4. Sort in Ascending Order:
+
+db.students.find().sort({marks: 1})
+
+
+
+5. Sort in Descending Order:
+
+db.students.find().sort({marks: -1})
+
+
+6. Aggregate - Average Marks:
+
+db.students.aggregate([
+    {
+        $group: {
+            _id: null,
+            AverageMarks: { $avg: "$marks" }
+        }
+    }
+])
+
+7. Aggregate - Maximum Marks:
+
+db.students.aggregate([
+    {
+        $group: {
+            _id: null,
+            maximumMarks: { $max: "$marks" }
+        }
+    }
+])
+
+8. Aggregate - Minimum Marks:
+
+db.students.aggregate([
+    {
+        $group: {
+            _id: null,
+            MinimumMarks: { $min: "$marks" }
+        }
+    }
+])
+
+9. Aggregate - Total Marks:
+
+db.students.aggregate([
+    {
+        $group: {
+            _id: null,
+            TotalMarks: { $sum: "$marks" }
+        }
+    }
+])
+
+In MongoDB, there is no separate CREATE DATABASE command like in SQL.
+
+A database is created automatically when you switch to it and store data in it.
+
+
