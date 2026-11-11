@@ -1,1 +1,347 @@
-lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla lalalalalalalla lalalalalalalla    lalalalalalalla 
+QUESTION 1
+​CREATE TABLE STUDENT (
+Student_id INT,
+Student_name VARCHAR(50),
+Address VARCHAR(100),
+Phone_no VARCHAR(15),
+Dept_id INT,
+Dept_name VARCHAR(50),
+Course_id CHAR(10),
+Marks INT
+);
+​ALTER TABLE STUDENT ADD DOB DATE;
+​ALTER TABLE STUDENT MODIFY Course_id VARCHAR2(20);
+​ALTER TABLE STUDENT RENAME COLUMN Student_id TO S_id;
+​ALTER TABLE STUDENT MODIFY Student_name VARCHAR2(100);
+​INSERT INTO STUDENT VALUES (1, 'Ravi', 'Hyderabad', '9876543210', 10, 'CSE', 'CS101', 85, TO_DATE('2002-05-10', 'YYYY-MM-DD'));
+INSERT INTO STUDENT VALUES (2, 'Priya', 'Secunderabad', '9876543211', 20, 'ECE', 'EC101', 90, TO_DATE('2001-08-15', 'YYYY-MM-DD'));
+INSERT INTO STUDENT VALUES (3, 'Arun', 'Warangal', '9876543212', 10, 'CSE', 'CS102', 75, TO_DATE('2002-12-01', 'YYYY-MM-DD'));
+INSERT INTO STUDENT VALUES (4, 'Sneha', 'Hyderabad', '9876543213', 30, 'IT', 'IT101', 88, TO_DATE('2003-01-20', 'YYYY-MM-DD'));
+INSERT INTO STUDENT VALUES (5, 'Kiran', 'Karimnagar', '9876543214', 20, 'ECE', 'EC102', 65, TO_DATE('2002-11-11', 'YYYY-MM-DD'));
+​SELECT * FROM STUDENT;
+​CREATE OR REPLACE TRIGGER trg_student_audit
+AFTER INSERT OR UPDATE OR DELETE ON STUDENT
+FOR EACH ROW
+BEGIN
+IF INSERTING THEN
+DBMS_OUTPUT.PUT_LINE('Row Inserted');
+ELSIF UPDATING THEN
+DBMS_OUTPUT.PUT_LINE('Row Updated');
+ELSIF DELETING THEN
+DBMS_OUTPUT.PUT_LINE('Row Deleted');
+END IF;
+END;
+/
+​QUESTION 2
+​CREATE TABLE STUDENT (
+Student_id INT,
+Student_name VARCHAR(50),
+Address VARCHAR(100),
+Phone_no VARCHAR(15),
+Dept_id INT,
+Dept_name VARCHAR(50),
+Course_id VARCHAR(10),
+Marks INT
+);
+​INSERT INTO STUDENT VALUES (11, 'Amit', 'Delhi', '9876543220', 10, 'CSE', 'CS101', 80);
+INSERT INTO STUDENT VALUES (12, 'Rohan', 'Pune', '9876543221', 20, 'ECE', 'EC101', 75);
+INSERT INTO STUDENT VALUES (13, 'James', 'Mumbai', '9876543222', 10, 'CSE', 'CS102', 88);
+INSERT INTO STUDENT VALUES (14, 'Anu', 'Chennai', '9876543223', 30, 'MECH', 'ME101', 92);
+INSERT INTO STUDENT VALUES (15, 'Alex', 'Bangalore', '9876543224', 40, 'CIVIL', 'CE101', 69);
+​SELECT * FROM STUDENT;
+​UPDATE STUDENT SET Address = 'Hyderabad' WHERE Student_id = 12;
+​CREATE OR REPLACE PROCEDURE GetStudentMarks (
+p_sid IN INT,
+p_marks OUT INT
+) AS
+BEGIN
+SELECT Marks INTO p_marks FROM STUDENT WHERE Student_id = p_sid;
+END;
+/
+​VARIABLE v_marks NUMBER;
+EXEC GetStudentMarks(12, :v_marks);
+PRINT v_marks;
+​CREATE OR REPLACE PROCEDURE GetStudentMarks (
+p_sid IN INT,
+p_marks OUT INT
+) AS
+BEGIN
+SELECT Marks INTO p_marks FROM STUDENT WHERE Student_id = p_sid;
+p_marks := p_marks + 5;
+END;
+/
+​QUESTION 3
+​CREATE TABLE EMPLOYEE (
+Emp_no INT,
+E_name VARCHAR(50),
+E_address VARCHAR(100),
+E_ph_no VARCHAR(15),
+Dept_no INT,
+Dept_name VARCHAR(50),
+Job_id VARCHAR(10),
+Salary DECIMAL(10,2),
+email_id VARCHAR(50)
+);
+​SELECT * FROM EMPLOYEE WHERE Dept_name = 'MECH';
+​UPDATE EMPLOYEE SET email_id = NULL WHERE E_name = 'James';
+​SELECT * FROM EMPLOYEE WHERE Dept_name = 'SALES';
+​db.employees.insertOne({ emp_no: 101, name: "James", dept: "SALES" });
+db.employees.find({ dept: "SALES" });
+db.employees.updateOne({ emp_no: 101 }, { $set: { dept: "MECH" } });
+db.employees.deleteOne({ emp_no: 101 });
+​QUESTION 4
+​CREATE TABLE EMPLOYEE (
+E_id INT PRIMARY KEY,
+E_name VARCHAR(50),
+Age INT,
+Salary DECIMAL(10,2)
+);
+​INSERT INTO EMPLOYEE VALUES (101, 'Anu', 22, 9000);
+INSERT INTO EMPLOYEE VALUES (102, 'Shane', 29, 8000);
+INSERT INTO EMPLOYEE VALUES (103, 'Rohan', 34, 6000);
+INSERT INTO EMPLOYEE VALUES (104, 'Scott', 44, 10000);
+INSERT INTO EMPLOYEE VALUES (105, 'Tiger', 35, 8000);
+INSERT INTO EMPLOYEE VALUES (106, 'Alex', 27, 7000);
+INSERT INTO EMPLOYEE VALUES (107, 'Abhi', 29, 8000);
+​SELECT COUNT(E_name) FROM EMPLOYEE;
+​SELECT MAX(Age) FROM EMPLOYEE;
+​SELECT MIN(Age) FROM EMPLOYEE;
+​db.emp.insertOne({ id: 101, name: "Anu", skills: ["C++", "Java"] });
+db.emp.find().count();
+db.emp.find().sort({ Age: 1 });
+db.emp.aggregate([{ $group: { _id: null, avgSal: { $avg: "$Salary" } } }]);
+​QUESTION 5
+​CREATE TABLE Sailor (
+sid INT PRIMARY KEY,
+sname VARCHAR(50),
+rating INT,
+age DECIMAL(4,1)
+);
+​CREATE TABLE Boats (
+bid INT PRIMARY KEY,
+bname VARCHAR(50),
+color VARCHAR(20)
+);
+​CREATE TABLE Reserves (
+sid INT,
+bid INT,
+day VARCHAR(20),
+PRIMARY KEY (sid, bid, day),
+FOREIGN KEY (sid) REFERENCES Sailor(sid),
+FOREIGN KEY (bid) REFERENCES Boats(bid)
+);
+​SELECT sname FROM Sailor WHERE sid IN (
+SELECT sid FROM Reserves WHERE bid IN (
+SELECT bid FROM Boats WHERE color = 'red'
+)
+);
+​SELECT s.sname FROM Sailor s WHERE 103 IN (
+SELECT r.bid FROM Reserves r WHERE r.sid = s.sid
+);
+​QUESTION 6
+​CREATE TABLE Sailor (
+Sid INT PRIMARY KEY,
+Sname VARCHAR(50),
+Rating INT,
+Age DECIMAL(4,1)
+);
+​INSERT INTO Sailor VALUES (22, 'Dustin', 7, 45.0);
+INSERT INTO Sailor VALUES (29, 'Brutus', 1, 33.0);
+INSERT INTO Sailor VALUES (31, 'Lubber', 8, 55.5);
+INSERT INTO Sailor VALUES (58, 'Rusty', 10, 35.0);
+INSERT INTO Sailor VALUES (64, 'Horatio', 7, 35.0);
+INSERT INTO Sailor VALUES (71, 'Zorba', 10, 16.0);
+INSERT INTO Sailor VALUES (85, 'Art', 3, 25.5);
+INSERT INTO Sailor VALUES (95, 'Bob', 3, 63.5);
+​SELECT AVG(Age) FROM Sailor WHERE Rating = 10;
+​SELECT MIN(Age) FROM Sailor;
+​SELECT MAX(Age) FROM Sailor;
+​SELECT Rating, COUNT(*) FROM Sailor GROUP BY Rating;
+​CREATE TABLE Student_1NF (
+Roll_no INT,
+Course VARCHAR(20),
+PRIMARY KEY (Roll_no, Course)
+);
+​CREATE TABLE Student_2NF (
+Roll_no INT PRIMARY KEY,
+Student_Name VARCHAR(50)
+);
+​CREATE TABLE Course_2NF (
+Course_ID VARCHAR(10) PRIMARY KEY,
+Course_Name VARCHAR(50)
+);
+​CREATE TABLE Department_3NF (
+Dept_ID INT PRIMARY KEY,
+Dept_Name VARCHAR(50)
+);
+​CREATE TABLE Employee_3NF (
+Emp_ID INT PRIMARY KEY,
+Dept_ID INT,
+FOREIGN KEY (Dept_ID) REFERENCES Department_3NF(Dept_ID)
+);
+​QUESTION 7
+​CREATE TABLE Customer (
+ID INT PRIMARY KEY,
+NAME VARCHAR(50),
+AGE INT,
+ADDRESS VARCHAR(50),
+SALARY DECIMAL(10,2)
+);
+​CREATE TABLE Orders (
+OID INT PRIMARY KEY,
+ODAY DATE,
+CUSTOMER_ID INT,
+AMOUNT DECIMAL(10,2)
+);
+​SELECT * FROM Customer c INNER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​SELECT * FROM Customer c LEFT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​SELECT * FROM Customer c RIGHT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​QUESTION 8
+​CREATE TABLE STUDENT (
+Sid INT PRIMARY KEY,
+S_name VARCHAR(50),
+Dept VARCHAR(20)
+);
+​CREATE TABLE MARKS (
+S_id INT,
+Subject VARCHAR(50),
+Marks INT
+);
+​INSERT INTO STUDENT VALUES (101, 'Dustin', 'CSE');
+INSERT INTO STUDENT VALUES (102, 'Brutus', 'ECE');
+INSERT INTO STUDENT VALUES (103, 'Lubber', 'CSE');
+INSERT INTO STUDENT VALUES (104, 'Andy', 'IT');
+INSERT INTO STUDENT VALUES (105, 'Rama', 'CSE');
+​INSERT INTO MARKS VALUES (101, 'DBMS', 90);
+INSERT INTO MARKS VALUES (102, 'DBMS', 65);
+INSERT INTO MARKS VALUES (103, 'DBMS', 85);
+INSERT INTO MARKS VALUES (104, 'DBMS', 55);
+​SELECT S_id FROM MARKS WHERE Marks > 60
+INTERSECT
+SELECT S_id FROM MARKS WHERE Marks > 80;
+​SELECT Sid FROM STUDENT
+UNION ALL
+SELECT S_id FROM MARKS;
+​SELECT S_name FROM STUDENT s WHERE EXISTS (
+SELECT 1 FROM MARKS m WHERE m.S_id = s.Sid
+);
+​CREATE OR REPLACE PROCEDURE UpdateMarks (
+p_sid IN INT,
+p_marks IN INT
+) AS
+BEGIN
+UPDATE MARKS SET Marks = p_marks WHERE S_id = p_sid;
+END;
+/
+​EXEC UpdateMarks(101, 95);
+​CREATE OR REPLACE PROCEDURE UpdateMarks (
+p_sid IN INT,
+p_marks IN INT
+) AS
+BEGIN
+UPDATE MARKS SET Marks = p_marks + 2 WHERE S_id = p_sid;
+END;
+/
+​QUESTION 9
+​db.student.insertOne({ student_id: 1, name: "Dustin", dept: "CSE" });
+db.student.find({ dept: "CSE" });
+db.student.updateOne({ student_id: 1 }, { $set: { dept: "IT" } });
+db.student.deleteOne({ student_id: 1 });
+​CREATE TABLE STUDENT (
+Student_id INT,
+Student_name VARCHAR(50),
+Address VARCHAR(100),
+Phone_no VARCHAR(15),
+Dept_id INT,
+Dept_name VARCHAR(50),
+Course_id VARCHAR(10),
+Marks INT
+);
+​INSERT INTO STUDENT VALUES (101, 'Anu', 'Hyderabad', '9876543201', 10, 'CSE', 'CS101', 90);
+INSERT INTO STUDENT VALUES (102, 'Shane', 'Delhi', '9876543202', 10, 'CSE', 'CS101', 80);
+INSERT INTO STUDENT VALUES (103, 'Rohan', 'Pune', '9876543203', 20, 'ECE', 'EC101', 76);
+INSERT INTO STUDENT VALUES (104, 'Scott', 'Mumbai', '9876543204', 30, 'IT', 'IT101', 100);
+INSERT INTO STUDENT VALUES (105, 'Tiger', 'Warangal', '9876543205', 20, 'ECE', 'EC101', 80);
+​SELECT * FROM STUDENT;
+​QUESTION 10
+​CREATE TABLE STUDENT (
+S_id INT PRIMARY KEY,
+S_name VARCHAR(50),
+Age INT,
+Marks INT
+);
+​INSERT INTO STUDENT VALUES (101, 'Anu', 22, 90);
+INSERT INTO STUDENT VALUES (102, 'Shane', 21, 80);
+INSERT INTO STUDENT VALUES (103, 'Rohan', 24, 76);
+INSERT INTO STUDENT VALUES (104, 'Scott', 23, 100);
+INSERT INTO STUDENT VALUES (105, 'Tiger', 22, 80);
+INSERT INTO STUDENT VALUES (106, 'Alex', 20, 70);
+INSERT INTO STUDENT VALUES (107, 'Abhi', 21, 80);
+​SELECT Marks, COUNT(*) FROM STUDENT GROUP BY Marks;
+​SELECT * FROM STUDENT ORDER BY Marks ASC;
+​SELECT * FROM STUDENT ORDER BY Marks DESC;
+​CREATE TABLE ENROLLMENT (
+Sid INT PRIMARY KEY,
+S_name VARCHAR(50),
+Marks INT
+);
+​INSERT INTO ENROLLMENT VALUES (1, 'Ravi', 80);
+INSERT INTO ENROLLMENT VALUES (2, 'Priya', 90);
+INSERT INTO ENROLLMENT VALUES (3, 'Arun', 70);
+​SELECT S_name FROM ENROLLMENT WHERE Marks > ANY (
+SELECT Marks FROM ENROLLMENT WHERE Marks < 90
+);
+​SELECT S_name FROM ENROLLMENT WHERE Marks > ALL (
+SELECT Marks FROM ENROLLMENT WHERE Marks < 90
+);
+​SELECT S_name FROM ENROLLMENT WHERE Marks > 75
+UNION
+SELECT S_name FROM ENROLLMENT WHERE Marks < 80;
+​QUESTION 11
+​CREATE OR REPLACE TRIGGER trg_student_ops
+AFTER INSERT OR UPDATE OR DELETE ON STUDENT
+FOR EACH ROW
+BEGIN
+IF INSERTING THEN
+DBMS_OUTPUT.PUT_LINE('Record Inserted');
+ELSIF UPDATING THEN
+DBMS_OUTPUT.PUT_LINE('Record Updated');
+ELSIF DELETING THEN
+DBMS_OUTPUT.PUT_LINE('Record Deleted');
+END IF;
+END;
+/
+​CREATE TABLE Student_Courses_1NF (
+Roll_no INT,
+Course VARCHAR(20),
+PRIMARY KEY (Roll_no, Course)
+);
+​CREATE TABLE Student_Details_2NF (
+Roll_no INT PRIMARY KEY,
+Student_Name VARCHAR(50)
+);
+​CREATE TABLE Department_Info_3NF (
+Dept_ID INT PRIMARY KEY,
+Dept_Name VARCHAR(50)
+);
+​QUESTION 12
+​db.students.insertOne({ name: "Ravi", marks: [80, 90, 70] });
+db.students.find().count();
+db.students.find().sort({ name: 1 });
+db.students.aggregate([
+{ $unwind: "$marks" },
+{ $group: { _id: "$name", avgMarks: { $avg: "$marks" } } }
+]);
+​CREATE TABLE Course_1NF (
+Roll_no INT,
+Course VARCHAR(20),
+PRIMARY KEY (Roll_no, Course)
+);
+​CREATE TABLE Course_2NF (
+Course_ID VARCHAR(10) PRIMARY KEY,
+Course_Name VARCHAR(50)
+);
+​CREATE TABLE Dept_3NF (
+Dept_ID INT PRIMARY KEY,
+Dept_Head VARCHAR(50)
+);
