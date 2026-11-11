@@ -1,59 +1,264 @@
-### SQL Commands Quick Reference Card
-
-```sql
-/* =========================================================
-   1. JOINS
-   ========================================================= */
-
--- INNER JOIN (Matches rows with common values in both tables)
-SELECT S.Student_Name, D.Department_Name
-FROM Student S
-INNER JOIN Department D
-ON S.Dept_ID = D.Dept_ID;
-
--- EQUI JOIN (Uses the equality '=' operator in the WHERE clause)
-SELECT S.Student_Name, D.Department_Name
-FROM Student S, Department D
-WHERE S.Dept_ID = D.Dept_ID;
-
--- LEFT OUTER JOIN (All left records + matching right records)
-SELECT S.Student_Name, D.Department_Name
-FROM Student S 
-LEFT OUTER JOIN Department D
-ON S.Dept_ID = D.Dept_ID;
-
--- RIGHT OUTER JOIN (All right records + matching left records)
-SELECT S.Student_Name, D.Department_Name
-FROM Student S 
-RIGHT OUTER JOIN Department D
-ON S.Dept_ID = D.Dept_ID;
-
--- FULL OUTER JOIN (All records from both tables; missing values = NULL)
-SELECT S.Student_Name, D.Department_Name
-FROM Student S 
-FULL OUTER JOIN Department D
-ON S.Dept_ID = D.Dept_ID;
-
-
-/* =========================================================
-   2. SUBQUERIES
-   ========================================================= */
-
--- NESTED SUBQUERY (Inner query runs independently first)
-SELECT Student_Name, Marks
-FROM Student
-WHERE Marks > (
-    SELECT AVG(Marks)
-    FROM Student
+QUESTION 1
+​CREATE TABLE EMPLOYEE (
+Emp_no INT,
+E_name VARCHAR(50),
+E_address VARCHAR(100),
+E_ph_no VARCHAR(15),
+Dept_no INT,
+Dept_name VARCHAR(50),
+Job_id CHAR(10),
+Salary DECIMAL(10,2)
 );
-
--- CORRELATED SUBQUERY (Inner query runs for each row of the outer query)
-SELECT S1.Student_Name, S1.Department, S1.Marks
-FROM Student S1
-WHERE S1.Marks > (
-    SELECT AVG(S2.Marks)
-    FROM Student S2
-    WHERE S2.Department = S1.Department
+​ALTER TABLE EMPLOYEE ADD HIREDATE DATE;
+​ALTER TABLE EMPLOYEE MODIFY Job_id VARCHAR2(20);
+​ALTER TABLE EMPLOYEE RENAME COLUMN Emp_no TO E_no;
+​ALTER TABLE EMPLOYEE MODIFY Job_id VARCHAR2(30);
+​CREATE OR REPLACE TRIGGER trg_employee_audit
+AFTER INSERT OR UPDATE OR DELETE ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+IF INSERTING THEN
+DBMS_OUTPUT.PUT_LINE('Row Inserted');
+ELSIF UPDATING THEN
+DBMS_OUTPUT.PUT_LINE('Row Updated');
+ELSIF DELETING THEN
+DBMS_OUTPUT.PUT_LINE('Row Deleted');
+END IF;
+END;
+/
+​QUESTION 2
+​CREATE TABLE EMPLOYEE (
+Emp_no INT,
+E_name VARCHAR(50),
+E_address VARCHAR(100),
+E_ph_no VARCHAR(15),
+Dept_no INT,
+Dept_name VARCHAR(50),
+Job_id VARCHAR(10),
+Salary DECIMAL(10,2)
 );
-
-```
+​INSERT INTO EMPLOYEE VALUES (11, 'Amit', 'Mumbai', '9876543210', 10, 'IT', 'DEV', 50000);
+INSERT INTO EMPLOYEE VALUES (12, 'Rohan', 'Pune', '9876543211', 20, 'HR', 'MGR', 60000);
+INSERT INTO EMPLOYEE VALUES (13, 'Priya', 'Delhi', '9876543212', 10, 'IT', 'TEST', 45000);
+INSERT INTO EMPLOYEE VALUES (14, 'James', 'Bangalore', '9876543213', 30, 'SALES', 'EXEC', 40000);
+INSERT INTO EMPLOYEE VALUES (15, 'Gita', 'Nagpur', '9876543214', 40, 'MECH', 'ENG', 55000);
+​SELECT * FROM EMPLOYEE;
+​UPDATE EMPLOYEE SET E_address = 'Nagpur' WHERE Emp_no = 12;
+​CREATE TABLE Mini_Accounts (
+Acc_no INT PRIMARY KEY,
+Holder_Name VARCHAR(50),
+Balance DECIMAL(10,2)
+);
+​INSERT INTO Mini_Accounts VALUES (1001, 'Rahul', 5000);
+INSERT INTO Mini_Accounts VALUES (1002, 'Sneha', 12000);
+​UPDATE Mini_Accounts SET Balance = Balance - 500 WHERE Acc_no = 1001;
+UPDATE Mini_Accounts SET Balance = Balance + 500 WHERE Acc_no = 1002;
+​SELECT * FROM Mini_Accounts;
+​QUESTION 3
+​SELECT * FROM EMPLOYEE WHERE Dept_name = 'MECH';
+​UPDATE EMPLOYEE SET E_address = NULL WHERE E_name = 'James';
+​SELECT * FROM EMPLOYEE WHERE Dept_name = 'SALES';
+​db.employees.insertOne({ emp_id: 1, name: "Ani", dept: "IT" });
+db.employees.find({ dept: "IT" });
+db.employees.updateOne({ emp_id: 1 }, { $set: { dept: "MECH" } });
+db.employees.deleteOne({ emp_id: 1 });
+​QUESTION 4
+​CREATE TABLE EMPLOYEE (
+E_id INT PRIMARY KEY,
+E_name VARCHAR(50),
+Age INT,
+Salary DECIMAL(10,2)
+);
+​INSERT INTO EMPLOYEE VALUES (101, 'Ani', 22, 9000);
+INSERT INTO EMPLOYEE VALUES (102, 'Shane', 29, 8000);
+INSERT INTO EMPLOYEE VALUES (103, 'Rohan', 34, 6000);
+INSERT INTO EMPLOYEE VALUES (104, 'Scott', 44, 10000);
+INSERT INTO EMPLOYEE VALUES (105, 'Tiger', 35, 8000);
+INSERT INTO EMPLOYEE VALUES (106, 'Alex', 27, 7000);
+INSERT INTO EMPLOYEE VALUES (107, 'Abhi', 29, 8000);
+​SELECT COUNT(E_name) FROM EMPLOYEE;
+​SELECT MAX(Age) FROM EMPLOYEE;
+​SELECT MIN(Age) FROM EMPLOYEE;
+​db.emp.insertOne({ id: 101, name: "Ani", skills: ["SQL", "Java"] });
+db.emp.find().count();
+db.emp.find().sort({ Age: 1 });
+db.emp.aggregate([{ $group: { _id: "$dept", avgSal: { $avg: "$Salary" } } }]);
+​QUESTION 5
+​SELECT Salary, COUNT(*) FROM EMPLOYEE GROUP BY Salary;
+​SELECT * FROM EMPLOYEE ORDER BY Salary ASC;
+​SELECT * FROM EMPLOYEE ORDER BY Salary DESC;
+​CREATE OR REPLACE PROCEDURE GetEmpSalary (
+p_id IN INT,
+p_sal OUT DECIMAL
+) AS
+BEGIN
+SELECT Salary INTO p_sal FROM EMPLOYEE WHERE E_id = p_id;
+END;
+/
+​VARIABLE v_sal NUMBER;
+EXEC GetEmpSalary(101, :v_sal);
+PRINT v_sal;
+​CREATE OR REPLACE PROCEDURE GetEmpSalary (
+p_id IN INT,
+p_sal OUT DECIMAL
+) AS
+BEGIN
+SELECT Salary INTO p_sal FROM EMPLOYEE WHERE E_id = p_id;
+p_sal := p_sal + 500;
+END;
+/
+​QUESTION 6
+​CREATE TABLE EMPLOYEE (
+EMPNO INT,
+ENAME VARCHAR(50),
+JOB VARCHAR(50),
+MANAGER_NO INT,
+SAL DECIMAL(10,2),
+COMMISSION DECIMAL(10,2)
+);
+​INSERT INTO EMPLOYEE VALUES (101, 'abhi', 'manager', 1234, 1100, 70);
+INSERT INTO EMPLOYEE VALUES (102, 'rohith', 'analyst', 2345, 9000, 65);
+INSERT INTO EMPLOYEE VALUES (103, 'david', 'trainee', 3456, 9000, 65);
+ROLLBACK;
+SELECT * FROM EMPLOYEE;
+​ALTER TABLE EMPLOYEE ADD CONSTRAINT pk_emp PRIMARY KEY (EMPNO);
+ALTER TABLE EMPLOYEE MODIFY ENAME VARCHAR(50) NOT NULL;
+​INSERT INTO EMPLOYEE VALUES (NULL, 'test', 'clerk', 1234, 5000, 10);
+​CREATE TABLE Student (
+Roll_no VARCHAR(20) PRIMARY KEY,
+Student_name VARCHAR(50)
+);
+​CREATE TABLE Course (
+Course VARCHAR(20) PRIMARY KEY,
+Instructor VARCHAR(50),
+Classroom INT
+);
+​CREATE TABLE Student_Course (
+Roll_no VARCHAR(20),
+Course VARCHAR(20),
+PRIMARY KEY (Roll_no, Course),
+FOREIGN KEY (Roll_no) REFERENCES Student(Roll_no),
+FOREIGN KEY (Course) REFERENCES Course(Course)
+);
+​QUESTION 7
+​CREATE TABLE Sailor (
+sid INT PRIMARY KEY,
+sname VARCHAR(50),
+rating INT,
+age DECIMAL(4,1)
+);
+​CREATE TABLE Boats (
+bid INT PRIMARY KEY,
+bname VARCHAR(50),
+color VARCHAR(20)
+);
+​CREATE TABLE Reserves (
+sid INT,
+bid INT,
+day VARCHAR(20),
+PRIMARY KEY (sid, bid, day),
+FOREIGN KEY (sid) REFERENCES Sailor(sid),
+FOREIGN KEY (bid) REFERENCES Boats(bid)
+);
+​SELECT s.sname
+FROM Sailor s, Reserves r, Boats b
+WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
+INTERSECT
+SELECT s.sname
+FROM Sailor s, Reserves r, Boats b
+WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
+​SELECT s.sname
+FROM Sailor s, Reserves r, Boats b
+WHERE s.sid = r.sid AND r.bid = b.bid AND (b.color = 'red' OR b.color = 'green');
+​SELECT s.sname
+FROM Sailor s
+WHERE EXISTS (
+SELECT *
+FROM Reserves r
+WHERE r.sid = s.sid AND r.bid = 103
+);
+​SELECT s.sname
+FROM Sailor s
+WHERE NOT EXISTS (
+SELECT b.bid
+FROM Boats b
+WHERE NOT EXISTS (
+SELECT r.bid
+FROM Reserves r
+WHERE r.sid = s.sid AND r.bid = b.bid
+)
+);
+​SELECT r.sid
+FROM Reserves r, Boats b
+WHERE r.bid = b.bid AND b.color = 'red'
+EXCEPT
+SELECT r.sid
+FROM Reserves r, Boats b
+WHERE r.bid = b.bid AND b.color = 'green';
+​QUESTION 8
+​SELECT AVG(age) FROM Sailor WHERE rating = 10;
+​SELECT sname, age FROM Sailor WHERE age = (SELECT MAX(age) FROM Sailor);
+​SELECT rating, MIN(age) FROM Sailor GROUP BY rating;
+​SELECT rating, AVG(age) FROM Sailor GROUP BY rating HAVING COUNT(*) >= 2;
+​CREATE VIEW HighRatingSailors AS
+SELECT sid, sname, rating FROM Sailor WHERE rating > 7;
+​QUESTION 9
+​CREATE TABLE Customer (
+ID INT PRIMARY KEY,
+NAME VARCHAR(50),
+AGE INT,
+ADDRESS VARCHAR(50),
+SALARY DECIMAL(10,2)
+);
+​CREATE TABLE Orders (
+OID INT PRIMARY KEY,
+ODAY DATE,
+CUSTOMER_ID INT,
+AMOUNT DECIMAL(10,2)
+);
+​SELECT * FROM Customer c INNER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​SELECT * FROM Customer c LEFT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​SELECT * FROM Customer c RIGHT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
+​SELECT * FROM Customer c, Orders o WHERE c.ID = o.CUSTOMER_ID;
+​QUESTION 10
+​SELECT sname FROM Sailor WHERE sid IN (
+SELECT sid FROM Reserves WHERE bid IN (
+SELECT bid FROM Boats WHERE color = 'red'
+)
+);
+​SELECT s.sname FROM Sailor s WHERE 103 IN (
+SELECT r.bid FROM Reserves r WHERE r.sid = s.sid
+);
+​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
+INTERSECT
+SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
+​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
+UNION ALL
+SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
+​SELECT s.sname FROM Sailor s WHERE EXISTS (
+SELECT * FROM Reserves r WHERE r.sid = s.sid AND r.bid = 103
+);
+​SELECT s.sname FROM Sailor s WHERE NOT EXISTS (
+SELECT b.bid FROM Boats b WHERE NOT EXISTS (
+SELECT r.bid FROM Reserves r WHERE r.sid = s.sid AND r.bid = b.bid
+)
+);
+​SELECT sid FROM Reserves r, Boats b WHERE r.bid = b.bid AND b.color = 'red'
+EXCEPT
+SELECT sid FROM Reserves r, Boats b WHERE r.bid = b.bid AND b.color = 'green';
+​QUESTION 11
+​SELECT * FROM Sailor WHERE rating > ANY (SELECT rating FROM Sailor WHERE sname = 'Horatio');
+​SELECT * FROM Sailor WHERE rating >= ALL (SELECT rating FROM Sailor);
+​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
+​SELECT rating, AVG(age) FROM Sailor GROUP BY rating;
+​SELECT * FROM Sailor ORDER BY age ASC;
+​SELECT * FROM Sailor ORDER BY age DESC;
+​QUESTION 12
+​db.students.insertOne({ name: "Rohan", marks: [85, 90, 78] });
+db.students.find({ marks: 90 });
+db.students.find().count();
+db.students.find().sort({ name: 1 });
+db.students.aggregate([
+{ $unwind: "$marks" },
+{ $group: { _id: "$name", avgMark: { $avg: "$marks" } } }
+]);
