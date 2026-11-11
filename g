@@ -1,1 +1,11 @@
-curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent" -H "x-goog-api-key: AQ.Ab8RN6K0q0hjntv5svelUkZWMYlWVW2fE7DEV2_2g5pG8kLdfQ" -H "Content-Type: application/json" -d "{\"contents\":[{\"parts\":[{\"text\":\"what is docker\"}]}]}" | python3 -c "import sys,json;print(json.load(sys.stdin)['candidates'][0]['content']['parts'][0]['text'])"
+curl -s https://api.groq.com/openai/v1/chat/completions -H "Authorization: Bearer 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" -H "Content-Type: application/json" -d "{\"model\":\"openai/gpt-oss-120b\",\"messages\":[{\"role\":\"user\",\"content\":\"what is a stored procedure\"}]}" | python3 -c "import sys,json;print(json.load(sys.stdin)['choices'][0]['message']['content'])"
+
+#####
+
+curl -s https://api.groq.com/openai/v1/chat/completions -H "Authorization: Bearer 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" -H "Content-Type: application/json" -d "{\"model\":\"openai/gpt-oss-120b\",\"messages\":[{\"role\":\"user\",\"content\":\"what is a stored procedure\"}]}" | powershell -NoProfile -Command "($input -join '' | ConvertFrom-Json).choices[0].message.content"
+
+#######
+
+openai/gpt-oss-20b
+qwen/qwen3.8-27b
+groq/compound
