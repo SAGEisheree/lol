@@ -1,0 +1,1 @@
+curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent" -H "x-goog-api-key: AQ.Ab8RN6K0q0hjntv5svelUkZWMYlWVW2fE7DEV2_2g5pG8kLdfQ" -H "Content-Type: application/json" -d "{\"contents\":[{\"parts\":[{\"text\":\"what is docker\"}]}]}" | python3 -c "import sys,json;print(json.load(sys.stdin)['candidates'][0]['content']['parts'][0]['text'])"
