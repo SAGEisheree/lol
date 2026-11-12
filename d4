@@ -1,264 +1,566 @@
-QUESTION 1
-​CREATE TABLE EMPLOYEE (
-Emp_no INT,
-E_name VARCHAR(50),
-E_address VARCHAR(100),
-E_ph_no VARCHAR(15),
-Dept_no INT,
-Dept_name VARCHAR(50),
-Job_id CHAR(10),
-Salary DECIMAL(10,2)
-);
-​ALTER TABLE EMPLOYEE ADD HIREDATE DATE;
-​ALTER TABLE EMPLOYEE MODIFY Job_id VARCHAR2(20);
-​ALTER TABLE EMPLOYEE RENAME COLUMN Emp_no TO E_no;
-​ALTER TABLE EMPLOYEE MODIFY Job_id VARCHAR2(30);
-​CREATE OR REPLACE TRIGGER trg_employee_audit
-AFTER INSERT OR UPDATE OR DELETE ON EMPLOYEE
-FOR EACH ROW
-BEGIN
-IF INSERTING THEN
-DBMS_OUTPUT.PUT_LINE('Row Inserted');
-ELSIF UPDATING THEN
-DBMS_OUTPUT.PUT_LINE('Row Updated');
-ELSIF DELETING THEN
-DBMS_OUTPUT.PUT_LINE('Row Deleted');
-END IF;
-END;
-/
-​QUESTION 2
-​CREATE TABLE EMPLOYEE (
-Emp_no INT,
-E_name VARCHAR(50),
-E_address VARCHAR(100),
-E_ph_no VARCHAR(15),
-Dept_no INT,
-Dept_name VARCHAR(50),
-Job_id VARCHAR(10),
-Salary DECIMAL(10,2)
-);
-​INSERT INTO EMPLOYEE VALUES (11, 'Amit', 'Mumbai', '9876543210', 10, 'IT', 'DEV', 50000);
-INSERT INTO EMPLOYEE VALUES (12, 'Rohan', 'Pune', '9876543211', 20, 'HR', 'MGR', 60000);
-INSERT INTO EMPLOYEE VALUES (13, 'Priya', 'Delhi', '9876543212', 10, 'IT', 'TEST', 45000);
-INSERT INTO EMPLOYEE VALUES (14, 'James', 'Bangalore', '9876543213', 30, 'SALES', 'EXEC', 40000);
-INSERT INTO EMPLOYEE VALUES (15, 'Gita', 'Nagpur', '9876543214', 40, 'MECH', 'ENG', 55000);
-​SELECT * FROM EMPLOYEE;
-​UPDATE EMPLOYEE SET E_address = 'Nagpur' WHERE Emp_no = 12;
-​CREATE TABLE Mini_Accounts (
-Acc_no INT PRIMARY KEY,
-Holder_Name VARCHAR(50),
-Balance DECIMAL(10,2)
-);
-​INSERT INTO Mini_Accounts VALUES (1001, 'Rahul', 5000);
-INSERT INTO Mini_Accounts VALUES (1002, 'Sneha', 12000);
-​UPDATE Mini_Accounts SET Balance = Balance - 500 WHERE Acc_no = 1001;
-UPDATE Mini_Accounts SET Balance = Balance + 500 WHERE Acc_no = 1002;
-​SELECT * FROM Mini_Accounts;
-​QUESTION 3
-​SELECT * FROM EMPLOYEE WHERE Dept_name = 'MECH';
-​UPDATE EMPLOYEE SET E_address = NULL WHERE E_name = 'James';
-​SELECT * FROM EMPLOYEE WHERE Dept_name = 'SALES';
-​db.employees.insertOne({ emp_id: 1, name: "Ani", dept: "IT" });
-db.employees.find({ dept: "IT" });
-db.employees.updateOne({ emp_id: 1 }, { $set: { dept: "MECH" } });
-db.employees.deleteOne({ emp_id: 1 });
-​QUESTION 4
-​CREATE TABLE EMPLOYEE (
-E_id INT PRIMARY KEY,
-E_name VARCHAR(50),
-Age INT,
-Salary DECIMAL(10,2)
-);
-​INSERT INTO EMPLOYEE VALUES (101, 'Ani', 22, 9000);
-INSERT INTO EMPLOYEE VALUES (102, 'Shane', 29, 8000);
-INSERT INTO EMPLOYEE VALUES (103, 'Rohan', 34, 6000);
-INSERT INTO EMPLOYEE VALUES (104, 'Scott', 44, 10000);
-INSERT INTO EMPLOYEE VALUES (105, 'Tiger', 35, 8000);
-INSERT INTO EMPLOYEE VALUES (106, 'Alex', 27, 7000);
-INSERT INTO EMPLOYEE VALUES (107, 'Abhi', 29, 8000);
-​SELECT COUNT(E_name) FROM EMPLOYEE;
-​SELECT MAX(Age) FROM EMPLOYEE;
-​SELECT MIN(Age) FROM EMPLOYEE;
-​db.emp.insertOne({ id: 101, name: "Ani", skills: ["SQL", "Java"] });
-db.emp.find().count();
-db.emp.find().sort({ Age: 1 });
-db.emp.aggregate([{ $group: { _id: "$dept", avgSal: { $avg: "$Salary" } } }]);
-​QUESTION 5
-​SELECT Salary, COUNT(*) FROM EMPLOYEE GROUP BY Salary;
-​SELECT * FROM EMPLOYEE ORDER BY Salary ASC;
-​SELECT * FROM EMPLOYEE ORDER BY Salary DESC;
-​CREATE OR REPLACE PROCEDURE GetEmpSalary (
-p_id IN INT,
-p_sal OUT DECIMAL
-) AS
-BEGIN
-SELECT Salary INTO p_sal FROM EMPLOYEE WHERE E_id = p_id;
-END;
-/
-​VARIABLE v_sal NUMBER;
-EXEC GetEmpSalary(101, :v_sal);
-PRINT v_sal;
-​CREATE OR REPLACE PROCEDURE GetEmpSalary (
-p_id IN INT,
-p_sal OUT DECIMAL
-) AS
-BEGIN
-SELECT Salary INTO p_sal FROM EMPLOYEE WHERE E_id = p_id;
-p_sal := p_sal + 500;
-END;
-/
-​QUESTION 6
-​CREATE TABLE EMPLOYEE (
-EMPNO INT,
-ENAME VARCHAR(50),
-JOB VARCHAR(50),
-MANAGER_NO INT,
-SAL DECIMAL(10,2),
-COMMISSION DECIMAL(10,2)
-);
-​INSERT INTO EMPLOYEE VALUES (101, 'abhi', 'manager', 1234, 1100, 70);
-INSERT INTO EMPLOYEE VALUES (102, 'rohith', 'analyst', 2345, 9000, 65);
-INSERT INTO EMPLOYEE VALUES (103, 'david', 'trainee', 3456, 9000, 65);
-ROLLBACK;
-SELECT * FROM EMPLOYEE;
-​ALTER TABLE EMPLOYEE ADD CONSTRAINT pk_emp PRIMARY KEY (EMPNO);
-ALTER TABLE EMPLOYEE MODIFY ENAME VARCHAR(50) NOT NULL;
-​INSERT INTO EMPLOYEE VALUES (NULL, 'test', 'clerk', 1234, 5000, 10);
-​CREATE TABLE Student (
-Roll_no VARCHAR(20) PRIMARY KEY,
-Student_name VARCHAR(50)
-);
-​CREATE TABLE Course (
-Course VARCHAR(20) PRIMARY KEY,
-Instructor VARCHAR(50),
-Classroom INT
-);
-​CREATE TABLE Student_Course (
-Roll_no VARCHAR(20),
-Course VARCHAR(20),
-PRIMARY KEY (Roll_no, Course),
-FOREIGN KEY (Roll_no) REFERENCES Student(Roll_no),
-FOREIGN KEY (Course) REFERENCES Course(Course)
-);
-​QUESTION 7
-​CREATE TABLE Sailor (
-sid INT PRIMARY KEY,
-sname VARCHAR(50),
-rating INT,
-age DECIMAL(4,1)
-);
-​CREATE TABLE Boats (
-bid INT PRIMARY KEY,
-bname VARCHAR(50),
-color VARCHAR(20)
-);
-​CREATE TABLE Reserves (
-sid INT,
-bid INT,
-day VARCHAR(20),
-PRIMARY KEY (sid, bid, day),
-FOREIGN KEY (sid) REFERENCES Sailor(sid),
-FOREIGN KEY (bid) REFERENCES Boats(bid)
-);
-​SELECT s.sname
-FROM Sailor s, Reserves r, Boats b
-WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
-INTERSECT
-SELECT s.sname
-FROM Sailor s, Reserves r, Boats b
-WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
-​SELECT s.sname
-FROM Sailor s, Reserves r, Boats b
-WHERE s.sid = r.sid AND r.bid = b.bid AND (b.color = 'red' OR b.color = 'green');
-​SELECT s.sname
-FROM Sailor s
-WHERE EXISTS (
-SELECT *
-FROM Reserves r
-WHERE r.sid = s.sid AND r.bid = 103
-);
-​SELECT s.sname
-FROM Sailor s
-WHERE NOT EXISTS (
-SELECT b.bid
-FROM Boats b
-WHERE NOT EXISTS (
-SELECT r.bid
-FROM Reserves r
-WHERE r.sid = s.sid AND r.bid = b.bid
-)
-);
-​SELECT r.sid
-FROM Reserves r, Boats b
-WHERE r.bid = b.bid AND b.color = 'red'
-EXCEPT
-SELECT r.sid
-FROM Reserves r, Boats b
-WHERE r.bid = b.bid AND b.color = 'green';
-​QUESTION 8
-​SELECT AVG(age) FROM Sailor WHERE rating = 10;
-​SELECT sname, age FROM Sailor WHERE age = (SELECT MAX(age) FROM Sailor);
-​SELECT rating, MIN(age) FROM Sailor GROUP BY rating;
-​SELECT rating, AVG(age) FROM Sailor GROUP BY rating HAVING COUNT(*) >= 2;
-​CREATE VIEW HighRatingSailors AS
-SELECT sid, sname, rating FROM Sailor WHERE rating > 7;
-​QUESTION 9
-​CREATE TABLE Customer (
-ID INT PRIMARY KEY,
-NAME VARCHAR(50),
-AGE INT,
-ADDRESS VARCHAR(50),
-SALARY DECIMAL(10,2)
-);
-​CREATE TABLE Orders (
-OID INT PRIMARY KEY,
-ODAY DATE,
-CUSTOMER_ID INT,
-AMOUNT DECIMAL(10,2)
-);
-​SELECT * FROM Customer c INNER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
-​SELECT * FROM Customer c LEFT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
-​SELECT * FROM Customer c RIGHT OUTER JOIN Orders o ON c.ID = o.CUSTOMER_ID;
-​SELECT * FROM Customer c, Orders o WHERE c.ID = o.CUSTOMER_ID;
-​QUESTION 10
-​SELECT sname FROM Sailor WHERE sid IN (
-SELECT sid FROM Reserves WHERE bid IN (
-SELECT bid FROM Boats WHERE color = 'red'
-)
-);
-​SELECT s.sname FROM Sailor s WHERE 103 IN (
-SELECT r.bid FROM Reserves r WHERE r.sid = s.sid
-);
-​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
-INTERSECT
-SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
-​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'red'
-UNION ALL
-SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
-​SELECT s.sname FROM Sailor s WHERE EXISTS (
-SELECT * FROM Reserves r WHERE r.sid = s.sid AND r.bid = 103
-);
-​SELECT s.sname FROM Sailor s WHERE NOT EXISTS (
-SELECT b.bid FROM Boats b WHERE NOT EXISTS (
-SELECT r.bid FROM Reserves r WHERE r.sid = s.sid AND r.bid = b.bid
-)
-);
-​SELECT sid FROM Reserves r, Boats b WHERE r.bid = b.bid AND b.color = 'red'
-EXCEPT
-SELECT sid FROM Reserves r, Boats b WHERE r.bid = b.bid AND b.color = 'green';
-​QUESTION 11
-​SELECT * FROM Sailor WHERE rating > ANY (SELECT rating FROM Sailor WHERE sname = 'Horatio');
-​SELECT * FROM Sailor WHERE rating >= ALL (SELECT rating FROM Sailor);
-​SELECT s.sname FROM Sailor s, Reserves r, Boats b WHERE s.sid = r.sid AND r.bid = b.bid AND b.color = 'green';
-​SELECT rating, AVG(age) FROM Sailor GROUP BY rating;
-​SELECT * FROM Sailor ORDER BY age ASC;
-​SELECT * FROM Sailor ORDER BY age DESC;
-​QUESTION 12
-​db.students.insertOne({ name: "Rohan", marks: [85, 90, 78] });
-db.students.find({ marks: 90 });
-db.students.find().count();
-db.students.find().sort({ name: 1 });
-db.students.aggregate([
-{ $unwind: "$marks" },
-{ $group: { _id: "$name", avgMark: { $avg: "$marks" } } }
-]);
+cmlab
+October 28, 2026
+# WEEK 1
+
+import sympy as SP
+
+A=sp.Matrix([[1,4],[3,2]])
+
+eigen_value=A.eigenvects() for val,mult, vecs in eigen_value:
+
+print(f'\nThe eigen value is [val} and its A.M is [mult]")
+
+for v in vecs:
+
+display("The eigenvector is:",v.T)
+
+
+
+# WEEK 2
+
+import numpy as np def f(x):
+
+return x**3-x-2
+
+a,b, h=-10, 10,1 for x in np.arange(a,b,h):
+
+if f(x)*f(x+h)<0:
+
+a=x
+
+b=x+h
+
+break
+
+print(The root lies between, a,b)
+
+tol=1e-5
+
+i=1
+
+print(f"\n ("itr":<13][*a":<10)("b":<10) ("c":<10)("f(c)":<10}")
+
+while abs(a-b)/2›tol:
+
+c=(a+b) /2
+
+print (f"\n (i: <13} {a: <18.4f) (b: <18.4f} {C: <18.4
+
+F} {f (C): <18.4f) ")
+
+if f(a)*f(c) <0:
+
+b=C
+
+else:
+
+i=i+1
+
+print(f"\n The required root is (c:.4f)")
+
+
+
+# WEEK 6
+
+import sympy as SP
+
+x=sp.symbols('x') # independent variable y=sp. Function('y'
+
+) # Dependent variable n=int (input ('Enter the order of give
+
+n ODE:")) coeff=[]
+
+for i in range(n+1):
+
+coeff.append(sp.sympify(input(f"Enter the coefficient of y^
+
+{n-i}:")))
+
+lhs=sum(coeff[i]*sp.diff(y(x),x,n-i) for i in range(n+1))
+
+rhs=sp.sympify(input(Enter the RHS term"))
+
+eq=sp. Eq(1hs, rhs)
+
+solution=sp.dsolve(eq)
+
+print (The general solution of given differential is:)
+
+display (solution)
+
+
+
+
+
+# WEEK 3
+
+import sympy as sp import numpy as np x=sp. Symbol('x')
+
+f=x**3-x-2
+
+df=sp.diff (f,x)
+
+F=sp. lambdify(x,f)
+
+DF=sp.lambdify(x,df)
+
+a,b,h=-10,10,1
+
+for x in np.arange(a,b,h):
+
+if F(x)*F(x+h)<0:
+
+a, b=x, x+h
+
+break
+
+print("\n The root lies between", a,b)
+
+print ('\n The value of the function at end a,b:",F(a), F(b))
+
+tol=1e-4
+
+i=1
+
+print (f"\n("itr.no':<13}("x0":<10} {"x1':<10}{"F(x1)"}")
+
+x0=(a+b) /2
+
+while True:
+
+x1=x0-F(x0)/DF (x0)
+
+print (F"In{(i:<13) {x0:<10.4f) {x1: <10.4f) {F(x1) : .4f)")
+
+if abs (x1-x0)<tol:
+
+break
+
+x0=x1
+
+1+=1
+
+print (F\n The required solution is (x1:.4f))
+
+
+
+# WEEK 9
+
+import math
+
+function=input('Enter the function")
+
+def f(x,y,u) :
+
+return eval(function)
+
+x,y,u,h=map(float, input('Enter the initial values of x,y,u,h=")
+
+.split())
+
+n=int (input (Enter the number of steps="))
+
+print (f" {'x': <13} {'y': <10} {'U': <10} ")
+
+for i in range(n):
+
+k1=h*u
+
+11=h*f(x,y,u)
+
+k2=h*(u+11/2)
+
+12=h*f(x+h/2,y+k1/2, u+11/2)
+
+k3=h*(u+12/2)
+
+13=h*f(x+h/2,y+k2/2, u+12/2)
+
+k4=h* (u+13)
+
+14=h*f(x+h,y+k3,u+13)
+
+y=y+1/6* (k1+2*k2+2*k3+k4)
+
+u=U+1/6* (11+2*12+2*13+14)
+
+x=X+h
+
+print(f"{x:5.2f}{y:10.4f}{u:10.4f}")
+
+
+
+
+
+# WEEK 7
+
+import math
+
+print(1.Newton's law of cooling 2.Growth 3.Decay")
+
+c=int (input ("Enter the choice:"))
+
+if c==1:
+
+T0,Ts,t1,T1=map(float, input("Enter the values of T0,Ts,t1,T
+
+1: ").split())
+
+k=-math.log((T1-Ts)/ (TO-Ts))/t1
+
+n=int(input('1.Find the temperature 2.FInd the time 3.Both\
+
+n choice:")) if n in (1,3):
+
+t=float (input(Enter the given timel))
+
+print ("The required Temperatre=", round (Ts+ (TO-Ts)
+
+*math.exp (-k*t) , 2))
+
+if n in (2,3):
+
+T=float (input ("Enter the given temperature: "))
+
+print("The required time=", round (-math.log((T-Ts)/(TO-Ts)
+
+)/k,2),"minutes")
+
+elif c in (2,3):
+
+No,t1,N1=map(float, input(Enter the values of NO,t1,N1:*).s
+
+plit())
+
+k=math.log(N1/N0)/t1
+
+n=int(input (1.Find the Quantity 2.Find the time 3.Both\n ch
+
+oice:)) if n in (1,3):
+
+t=float (input("Enter the given time"))
+
+print("Growth"if c==2 else "Decay","=",round(N0*math.exp(k
+
+*t),2))
+
+if n in (2,3):
+
+N=float (input ("Enter the given quantity:")) print ("The requ
+
+ired time=", round (math.log(N/NO)/k,2), "hours")
+
+else:
+
+print("Invalid choice")
+
+
+
+# WEEK 11
+
+import numpy as np
+
+print ("1.Power curve\n2. Exponential curve")
+
+c=int (input(Enter the choice:"))
+
+n=int (input ('Enter the number of data points:"))
+
+x=np.array(list(map(float,input("Enter the x values").split())
+
+))
+
+y=np.array(list (map(float,input(Enter the y values") .split())
+
+))
+
+#.........Fitting of a power curve y=ax^b..
+
+if c==1:
+
+X=np.log10(x)
+
+Y=np.log10(y)
+
+A=np.array([[n,np.sum(x)],[np.sum(x),np.sum(x**2)]])
+
+B=np.array ([np. sum(Y), np. sum(x*Y) ])
+
+log10a,b=np.linalg.solve(A,B)
+
+a=10*log10a
+
+print (f"\n The required curve is y=(a:.4f) x^(b:.4f)")
+
+#.........Fitting of exponential curve y=ae^ (bx) ..........
+
+else:
+
+Y=np .log(y)
+
+A=np.array([[n,np.sum(x)],[np.sum(x),np.sum(x**2)]])
+
+B=np.array([np.sum(Y), np.sum(x*Y)])
+
+loga,b=np.linalg.solve(A,B)
+
+a=np.exp(loga)
+
+print(f\n The required exponential curve is y=(a:.4f} e^{b:.4f
+
+}x")
+
+
+
+
+
+# WEEK 10
+
+import numpy as np
+
+print ("1.Straight line \n2.Polynomial")
+
+c=int (input ("Enter the choice:"))
+
+n=int (input ("Enter the number of data points:"))
+
+x=np.array(list(map(float, input("Enter the x values:") .split(
+
+))))
+
+y=np.array (list (map (float,input ("Enter the y values: "
+
+) .split ())))
+
+...fitting a straight line y=a+bx.
+
+if c==1:
+
+A=p.array([[n,np.sum(x)], [np. sum (x), np.sum(x**2) ]])
+
+B=np.array([np.sum(y),np.sum(x*y)])
+
+a,b=np.linalg.solve(A,B)
+
+print (f"\n The required straight line is y= {a: .4f} + {b:
+
+.4f} x")
+
+A=np.array ([[n,np.sum (x), np.sum (x**2)], [np.sum
+
+(x), np.Sum (x**2), np.sum (x**3)],
+
+[np.sum (x**2), np.sum (x**3), np.sum (x**4)] 1)
+
+B=np.array ([np.sum (y), np.sum (x*y), np.sum (x**2
+
+*y)])
+
+a,b, c=np.linalg.solve(A,B)
+
+print (f"\n The required parabola is y= {a: .4f} + {b: .4f
+
+} x+ {C: .4f} x^2")
+
+
+
+# WEEK 6
+
+import sympy as sp x,y=sp.symbols('x y')
+
+m=sp.sympify(input("Enter m:"))
+
+n=sp.symify(input("Enter n:"))
+
+def solve(m,n) :
+
+F=sp.integrate(m,x)
+
+G=sp.integrate(n-sp.diff(F,y),y)
+
+return sp.simplify(F+G)
+
+if sp.simplify(sp.diff(m,y)-sp.diff(n,x))==0:
+
+print ('The given equation is exact")
+
+display('Solution=', solve(m,n), '=c')
+
+else:
+
+print ('The given equation is not exact")
+
+u=sp.simplify(1/(m*x+n*y))
+
+if sp.simplify(sp.diff(u*m,y)-sp.diff(u*n,x))!=0:
+
+u=sp.simplify(1/(m*x-n*y))
+
+if sp.simplify(sp.diff(u*m,y)-sp.diff(u*n,x))!=0:
+
+f=sp.simplify((sp.diff(m,y)-sp.diff(n,x))/n)
+
+if not f.has(y):
+
+u=sp.exp(sp.integrate(f,x))
+
+if sp.simplify(sp.diff(u*m,y)-sp.diff(u*n,x))!=0:
+
+g=sp.simplify((sp.diff(n,x)-sp.diff(m,y))/m)
+
+if not g.has(x):
+
+u=sp.exp(sp.integrate(g,y))
+
+if sp.simplify(sp.diff(u m,y)-sp.diff(u*n,x))==0:
+
+display (The integrating factor:" ,sp.simplify(u))
+
+display ("Solution=", solve(u*m, u*n),"=c")
+
+else:
+
+print (Integrating factor is not found")
+
+
+
+
+
+
+
+PASS: Line Plot Generated
+
+
+
+In [19]:
+
+#Category Data → Bar Chart
+
+import matplotlib.pyplot as plt
+
+
+
+departments = ['IT', 'HR', 'Finance']
+
+employees = [50, 30, 20]
+
+
+
+try:
+
+    plt.figure(figsize=(6,4))
+
+    plt.bar(departments, employees)
+
+
+
+    plt.title("Employees by Department")
+
+    plt.xlabel("Department")
+
+    plt.ylabel("Employee Count")
+
+
+
+    plt.show()
+
+
+
+    print("PASS: Bar Chart Generated")
+
+
+
+except Exception as e:
+
+    print("FAIL:", e)
+
+
+
+PASS: Bar Chart Generated
+
+
+
+In [20]:
+
+
+
+
+
+
+
+
+
+# WEEK 5
+
+n=int(input(Enter the no.of equations:"))
+
+a=C]
+
+print(Enter the elements of matrix 'a' row wise)
+
+for i in range(n):
+
+row=list (map(int, input().split ()))
+
+a. append (row)
+
+print(Enter the elements of matrix 'b'")
+
+b=list (map(int, input().split()))
+
+is_dominant=True
+
+for i in range(n):
+
+diag=abs(a i][1])
+
+row_sum=sum(abs(a[i][j]) for j in range(n) if i!=j)
+
+if diag‹=row_sum:
+
+is_dominant=False
+
+if is_dominant:
+
+print ("The given system is diagonally dominant)
+
+x=[0.0]*n
+
+e=1e-4
+
+itr=1
+
+headers=*. join(f"xi+1:<10) for i in range(n))
+
+print(f"("itr.no:<10} (headers)")
+
+while True:
+
+x_old=x.copy()
+
+for i in range(n):
+
+row_sum=suma[i][j]*[j] for j in range(n) if i!=])
+
+x[i]=(b[i]-row_sum1)/a[i][i]
+
+values=. join(f" [val:<10.4f)" for val in x) print (f (itr: <10] {va
+
+lues}")
+
+if all (abs(x[i]-x_old[i])‹e for i in range(n)):
+
+break itr=itr+1
+
+print("\n The final solution ist)
+
+for i in range(n):
+
+print (E"x(1+1)=(x[1]: .4f)")
+
+else:
+
+print(The given system is not diagonally dominant)
+
+
+Report content on this page
